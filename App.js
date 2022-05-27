@@ -7,6 +7,7 @@ import { StatusBar } from "expo-status-bar";
 import Home from "./screens/Home";
 import Stopwatch from "./screens/Stopwatch";
 
+import { getThemeColor } from "./util/theme";
 import useStoreValue from "./hooks/useStoreValue";
 
 import appInfo from "./app.json";
@@ -17,16 +18,17 @@ export default function App() {
   const [darkMode, setDarkMode] = useStoreValue("darkMode");
   const [events] = useStoreValue("events");
 
-  const headerStyle = darkMode
-    ? {
-        headerStyle: {
-          backgroundColor: "#202020",
-        },
-        headerTintColor: "#ffffff",
-      }
-    : {};
+  const headerStyle = {
+    headerStyle: {
+      backgroundColor: getThemeColor("header", darkMode),
+    },
+    headerTintColor: getThemeColor("text", darkMode),
+    headerBackTitleStyle: {
+      color: getThemeColor("button", darkMode),
+    },
+  };
 
-  const buttonColor = darkMode ? "#ffffff" : "";
+  const buttonColor = getThemeColor("button", darkMode);
 
   return (
     <>

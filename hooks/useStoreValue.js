@@ -1,11 +1,6 @@
 import { useEffect, useState } from "react";
 import { useAsyncStorage } from "@react-native-async-storage/async-storage";
 
-const defaultValues = {
-  darkMode: true,
-  events: [],
-};
-
 function getDefaultValue(key) {
   switch (key) {
     case "darkMode":
@@ -24,7 +19,7 @@ function getDefaultValue(key) {
 export default function useStoreValue(storeKey, navigation) {
   const defaultValue = getDefaultValue(storeKey);
   const [item, setItemState] = useState(defaultValue);
-  const { getItem, setItem } = useAsyncStorage(storeKey);
+  const { getItem, setItem, removeItem } = useAsyncStorage(storeKey);
 
   const loadItemFromStore = () => {
     getItem()
@@ -48,5 +43,5 @@ export default function useStoreValue(storeKey, navigation) {
     if (navigation) return navigation.addListener("focus", loadItemFromStore);
   }, []);
 
-  return [item, changeItem];
+  return [item, changeItem, removeItem];
 }

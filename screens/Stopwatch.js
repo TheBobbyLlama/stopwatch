@@ -1,9 +1,9 @@
-import { Text, View } from "react-native";
+import { SafeAreaView, Text, View } from "react-native";
 
 export default function Stopwatch() {
   return (
-    <View>
+    <SafeAreaView>
       <Text>Stopwatch!</Text>
-    </View>
+    </SafeAreaView>
   );
 }
