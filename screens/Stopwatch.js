@@ -22,14 +22,55 @@ const padStart = (str, len, char) => {
   return str;
 };
 
+const formatTime = (elapsedTime) => {
+  // ==== Extract time components ====
+  const elapsedMS = elapsedTime % 1000;
+  elapsedTime = (elapsedTime - elapsedMS) / 1000;
+  // Extract seconds
+  const elapsedSeconds = elapsedTime % 60;
+  elapsedTime = (elapsedTime - elapsedSeconds) / 60;
+  // Extract minutes
+  const elapsedMinutes = elapsedTime % 60;
+  // Extract hours
+  const elapsedHours = (elapsedTime - elapsedMinutes) / 60;
+
+  //console.log(elapsedHours, elapsedMinutes, elapsedSeconds, elapsedMS);
+
+  // ==== Generate displayed value ====
+  let timeDisplay = "";
+
+  if (elapsedHours > 0) {
+    timeDisplay =
+      elapsedHours +
+      ":" +
+      padStart(elapsedMinutes.toString(), 2, "0") +
+      ":" +
+      padStart(elapsedSeconds.toString(), 2, "0");
+  } else if (elapsedMinutes > 0) {
+    timeDisplay =
+      elapsedMinutes.toString() +
+      ":" +
+      padStart(elapsedSeconds.toString(), 2, "0");
+  } else {
+    timeDisplay = elapsedSeconds.toString();
+  }
+
+  const msDisplay = padStart(Math.floor(elapsedMS / 10).toString(), 2, "0");
+
+  return [timeDisplay, msDisplay];
+};
+
 export default function Stopwatch() {
   const eventName = useRoute().name.split(": ").slice(1).join(": ");
   const { darkMode } = useContext(Store);
-  const [splits, setSplits, clearSplits] = useStoreValue("event:" + eventName);
+  const [savedSplits, setSavedSplits, clearSavedSplits] = useStoreValue(
+    "event:" + eventName
+  );
   // Timer functionality.
   const [startTime, setStartTime] = useState(0);
   const [elapsedTime, setElapsedTime] = useState(0);
   const [active, setActive] = useState(false);
+  const [splits, setSplits] = useState([]);
 
   useEffect(() => {
     let tick;
@@ -38,34 +79,36 @@ export default function Stopwatch() {
       tick = setInterval(() => {
         setElapsedTime(Date.now() - startTime);
       }, 10);
+    }
 
+    if (active) {
       activateKeepAwake(); // Don't let the screen sleep while the timer is running.
+    } else {
+      deactivateKeepAwake();
     }
 
     return () => {
       clearInterval(tick);
-      deactivateKeepAwake();
     };
   }, [active]);
 
-  const toggleTimerState = () => {
-    setStartTime(Date.now() - elapsedTime);
-    setActive(!active);
-  };
-
   const doStartSplit = () => {
+    // Start the timer
     if (!active) {
       setStartTime(Date.now() - elapsedTime);
       setActive(true);
     } else {
-      // TODO - Record split!
+      // Or record a split
+      setSplits([...splits, elapsedTime]);
     }
   };
 
   const doStopReset = () => {
+    // Stop the timer
     if (active) {
       setActive(false);
     } else {
+      // Or reset time to zero
       setElapsedTime(0);
     }
   };
@@ -106,53 +149,15 @@ export default function Stopwatch() {
     },
   });
 
-  const displayTime = (elapsedTime) => {
-    // ==== Extract time components ====
-    const elapsedMS = elapsedTime % 1000;
-    elapsedTime = (elapsedTime - elapsedMS) / 1000;
-    // Extract seconds
-    const elapsedSeconds = elapsedTime % 60;
-    elapsedTime = (elapsedTime - elapsedSeconds) / 60;
-    // Extract minutes
-    const elapsedMinutes = elapsedTime % 60;
-    // Extract hours
-    const elapsedHours = (elapsedTime - elapsedMinutes) / 60;
-
-    //console.log(elapsedHours, elapsedMinutes, elapsedSeconds, elapsedMS);
-
-    // ==== Generate displayed value ====
-    let timeDisplay = "";
-
-    if (elapsedHours > 0) {
-      timeDisplay =
-        elapsedHours +
-        ":" +
-        padStart(elapsedMinutes.toString(), 2, "0") +
-        ":" +
-        padStart(elapsedSeconds.toString(), 2, "0");
-    } else if (elapsedMinutes > 0) {
-      timeDisplay =
-        elapsedMinutes.toString() +
-        ":" +
-        padStart(elapsedSeconds.toString(), 2, "0");
-    } else {
-      timeDisplay = elapsedSeconds.toString();
-    }
-
-    const msDisplay = padStart(Math.floor(elapsedMS / 10).toString(), 2, "0");
-
-    return (
-      <View style={styles.showTime}>
-        <Text style={styles.time}>{timeDisplay}.</Text>
-        <Text style={styles.timeMS}>{msDisplay}</Text>
-      </View>
-    );
-  };
+  const [displayTime, displayMS] = formatTime(elapsedTime);
 
   return (
     <SafeAreaView style={styles.workspace}>
       <View style={styles.stopwatch}>
-        {displayTime(elapsedTime)}
+        <View style={styles.showTime}>
+          <Text style={styles.time}>{displayTime}.</Text>
+          <Text style={styles.timeMS}>{displayMS}</Text>
+        </View>
         <CustomButton
           title={active ? "Split" : "Start"}
           style={styles.buttonStart}

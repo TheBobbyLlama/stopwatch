@@ -4,7 +4,7 @@ import { useAsyncStorage } from "@react-native-async-storage/async-storage";
 function getDefaultValue(key) {
   switch (key) {
     case "darkMode":
-      return false;
+      return true;
     case "events":
       return [];
     default:
