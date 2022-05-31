@@ -16,7 +16,7 @@ function getDefaultValue(key) {
   }
 }
 
-export default function useStoreValue(storeKey, navigation) {
+export default function useStoreValue(storeKey) {
   const defaultValue = getDefaultValue(storeKey);
   const [item, setItemState] = useState(defaultValue);
   const { getItem, setItem, removeItem } = useAsyncStorage(storeKey);
@@ -39,8 +39,6 @@ export default function useStoreValue(storeKey, navigation) {
 
   useEffect(() => {
     loadItemFromStore();
-
-    if (navigation) return navigation.addListener("focus", loadItemFromStore);
   }, []);
 
   return [item, changeItem, removeItem];

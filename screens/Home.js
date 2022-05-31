@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import {
   FlatList,
+  Modal,
   SafeAreaView,
   StyleSheet,
   Text,
@@ -10,15 +11,53 @@ import {
 import { Button } from "@rneui/base";
 import { Icon } from "@rneui/themed";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import useStoreValue from "../hooks/useStoreValue";
+import Store from "../components/StoreContext";
 import { getThemeColor } from "../util/theme";
 
-export default function Home({ navigation }) {
-  const [darkMode] = useStoreValue("darkMode");
-  const [events, setEvents] = useStoreValue("events", navigation);
+export default function Home() {
+  const { darkMode, events, setEvents } = useContext(Store);
   const [newEvent, setNewEvent] = useState("");
+  const [deleteEvent, setDeleteEvent] = useState(-1);
 
   const styles = StyleSheet.create({
+    centeredView: {
+      alignItems: "center",
+      backgroundColor: "rgba(0, 0, 0, 0.5)",
+      display: "flex",
+      height: "100%",
+      justifyContent: "center",
+    },
+    modalView: {
+      alignItems: "center",
+      backgroundColor: getThemeColor("element", darkMode),
+      borderRadius: 8,
+      elevation: 5,
+      gap: 10,
+      paddingHorizontal: 32,
+      paddingVertical: 16,
+      shadowColor: "#000",
+      shadowOffset: {
+        width: 0,
+        height: 2,
+      },
+      shadowOpacity: 0.25,
+      shadowRadius: 4,
+    },
+    modalText: {
+      color: getThemeColor("text", darkMode),
+      fontSize: 20,
+      textAlign: "center",
+    },
+    modalButtonRow: {
+      alignItems: "center",
+      display: "flex",
+      flexDirection: "row",
+      justifyContent: "center",
+      marginTop: 10,
+    },
+    modalButton: {
+      margin: 4,
+    },
     workspace: {
       backgroundColor: getThemeColor("workspace", darkMode),
       height: "100%",
@@ -39,6 +78,7 @@ export default function Home({ navigation }) {
       paddingLeft: 20,
     },
     listContent: {
+      color: getThemeColor("text", darkMode),
       flexGrow: 1,
       fontSize: 20,
     },
@@ -59,22 +99,22 @@ export default function Home({ navigation }) {
     }
   };
 
-  // TODO - Add a confirmation modal!
-  const removeEvent = (index) => {
+  const removeEvent = () => {
     const updatedEvents = [...events];
-    AsyncStorage.removeItem("event:" + events[index]); // Clear the saved splits for the event.
-    updatedEvents.splice(index, 1);
+    AsyncStorage.removeItem("event:" + events[deleteEvent]); // Clear the saved splits for the event.
+    updatedEvents.splice(deleteEvent, 1);
     setEvents(updatedEvents);
+    setDeleteEvent(-1);
   };
 
-  const renderEventListing = (event, index) => {
+  const renderEventListing = ({ item, index }) => {
     return (
       <View style={styles.listRow}>
-        <Text style={styles.listContent}>{event.item}</Text>
+        <Text style={styles.listContent}>{item}</Text>
         <Button
           type="clear"
           onPress={() => {
-            removeEvent(index);
+            setDeleteEvent(index);
           }}
         >
           <Icon
@@ -89,6 +129,29 @@ export default function Home({ navigation }) {
 
   return (
     <SafeAreaView style={styles.workspace}>
+      <Modal animationType="fade" transparent={true} visible={deleteEvent > -1}>
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <Text style={styles.modalText}>
+              Delete "{events[deleteEvent]}" Event?
+            </Text>
+            <View style={styles.modalButtonRow}>
+              <Button
+                style={styles.modalButton}
+                title="Delete"
+                onPress={removeEvent}
+              />
+              <Button
+                style={styles.modalButton}
+                title="Cancel"
+                onPress={() => {
+                  setDeleteEvent(-1);
+                }}
+              />
+            </View>
+          </View>
+        </View>
+      </Modal>
       <FlatList
         style={styles.eventList}
         data={events}
@@ -98,7 +161,9 @@ export default function Home({ navigation }) {
         <TextInput
           style={styles.listInput}
           placeholder="Save a new Event..."
+          placeholderTextColor="rgba(128, 128, 128, 0.5)"
           returnKeyType="done"
+          maxLength={30}
           value={newEvent}
           onChangeText={setNewEvent}
         />
@@ -106,7 +171,7 @@ export default function Home({ navigation }) {
           <Icon
             name="plus"
             type="antdesign"
-            color={!!newEvent ? buttonColor : "rgba(128, 128, 128, 0.5)"}
+            color={!!newEvent ? buttonColor : "rgba(128, 128, 128, 0.1)"}
           />
         </Button>
       </View>

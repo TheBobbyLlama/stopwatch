@@ -11,9 +11,9 @@ export function getThemeColor(key, darkMode) {
             default: "black",
           });
     case "element":
-      return darkMode ? "#404040" : "white";
-    case "header":
       return darkMode ? "#202020" : "white";
+    case "header":
+      return darkMode ? "#303030" : "white";
     case "inputBorder":
       return darkMode ? "#808080" : "#c0c0c0";
     case "text":
