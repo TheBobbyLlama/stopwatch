@@ -1,71 +1,26 @@
 import { useContext, useEffect, useState } from "react";
 import { activateKeepAwake, deactivateKeepAwake } from "expo-keep-awake";
 import {
-  Button as SimpleButton,
+  Button,
+  FlatList,
   SafeAreaView,
   StyleSheet,
   Text,
   View,
 } from "react-native";
-import { Button } from "@rneui/base";
 import CustomButton from "../components/CustomButton";
+import Split from "../components/Split";
+
 import { useRoute } from "@react-navigation/native";
 import useStoreValue from "../hooks/useStoreValue";
-import { getThemeColor } from "../util/theme";
 import Store from "../components/StoreContext";
-
-const padStart = (str, len, char) => {
-  while (str.length < len) {
-    str = char + str;
-  }
-
-  return str;
-};
-
-const formatTime = (elapsedTime) => {
-  // ==== Extract time components ====
-  const elapsedMS = elapsedTime % 1000;
-  elapsedTime = (elapsedTime - elapsedMS) / 1000;
-  // Extract seconds
-  const elapsedSeconds = elapsedTime % 60;
-  elapsedTime = (elapsedTime - elapsedSeconds) / 60;
-  // Extract minutes
-  const elapsedMinutes = elapsedTime % 60;
-  // Extract hours
-  const elapsedHours = (elapsedTime - elapsedMinutes) / 60;
-
-  //console.log(elapsedHours, elapsedMinutes, elapsedSeconds, elapsedMS);
-
-  // ==== Generate displayed value ====
-  let timeDisplay = "";
-
-  if (elapsedHours > 0) {
-    timeDisplay =
-      elapsedHours +
-      ":" +
-      padStart(elapsedMinutes.toString(), 2, "0") +
-      ":" +
-      padStart(elapsedSeconds.toString(), 2, "0");
-  } else if (elapsedMinutes > 0) {
-    timeDisplay =
-      elapsedMinutes.toString() +
-      ":" +
-      padStart(elapsedSeconds.toString(), 2, "0");
-  } else {
-    timeDisplay = elapsedSeconds.toString();
-  }
-
-  const msDisplay = padStart(Math.floor(elapsedMS / 10).toString(), 2, "0");
-
-  return [timeDisplay, msDisplay];
-};
+import { getThemeColor } from "../util/theme";
+import { formatTime } from "../util/util";
 
 export default function Stopwatch() {
   const eventName = useRoute().name.split(": ").slice(1).join(": ");
   const { darkMode } = useContext(Store);
-  const [savedSplits, setSavedSplits, clearSavedSplits] = useStoreValue(
-    "event:" + eventName
-  );
+  const [savedSplits, setSavedSplits] = useStoreValue("event:" + eventName);
   // Timer functionality.
   const [startTime, setStartTime] = useState(0);
   const [elapsedTime, setElapsedTime] = useState(0);
@@ -110,7 +65,13 @@ export default function Stopwatch() {
     } else {
       // Or reset time to zero
       setElapsedTime(0);
+      setSplits([]);
     }
+  };
+
+  const saveSplits = () => {
+    setSavedSplits(splits);
+    setSplits([]);
   };
 
   const styles = StyleSheet.create({
@@ -134,12 +95,12 @@ export default function Stopwatch() {
     },
     time: {
       color: getThemeColor("text", darkMode),
-      fontSize: 36,
+      fontSize: 48,
     },
     timeMS: {
       color: getThemeColor("text", darkMode),
-      fontSize: 28,
-      minWidth: 36,
+      fontSize: 40,
+      minWidth: 60,
     },
     buttonStart: {
       alignItems: "stretch",
@@ -147,16 +108,68 @@ export default function Stopwatch() {
       marginVertical: 16,
       height: 100,
     },
+    splitView: {
+      backgroundColor: getThemeColor("element", darkMode),
+      borderRadius: 8,
+      margin: 10,
+      paddingHorizontal: 32,
+      paddingVertical: 16,
+    },
+    splitTitle: {
+      alignSelf: "center",
+      color: getThemeColor("text", darkMode),
+      fontSize: 24,
+      fontWeight: "bold",
+      marginBottom: 10,
+    },
+    splitPreview: {
+      height: 28,
+    },
   });
 
+  const renderSplit = ({ item, index }) => {
+    return <Split index={index} {...item} />;
+  };
+
   const [displayTime, displayMS] = formatTime(elapsedTime);
+
+  const splitData = [];
+
+  for (let i = 0; i < Math.max(splits.length, savedSplits.length); i++) {
+    const result = {
+      curSplit: null,
+      prevSplit: null,
+      curSaved: null,
+      prevSaved: null,
+    };
+
+    if (i < splits.length) {
+      result.curSplit = splits[i];
+      result.prevSplit = i > 0 ? splits[i - 1] : 0;
+    }
+
+    if (i < savedSplits.length) {
+      result.curSaved = savedSplits[i];
+      result.prevSaved = i > 0 ? savedSplits[i - 1] : 0;
+    }
+
+    splitData.push(result);
+  }
 
   return (
     <SafeAreaView style={styles.workspace}>
       <View style={styles.stopwatch}>
         <View style={styles.showTime}>
-          <Text style={styles.time}>{displayTime}.</Text>
-          <Text style={styles.timeMS}>{displayMS}</Text>
+          <Text style={styles.time}>{displayTime}</Text>
+          <Text style={styles.timeMS}>.{displayMS}</Text>
+        </View>
+        <View style={styles.splitPreview}>
+          {splits.length
+            ? renderSplit({
+                index: splits.length - 1,
+                item: splitData[splits.length - 1],
+              })
+            : null}
         </View>
         <CustomButton
           title={active ? "Split" : "Start"}
@@ -177,6 +190,15 @@ export default function Stopwatch() {
           disabled={!elapsedTime}
         />
       </View>
+      {splitData.length ? (
+        <View style={styles.splitView}>
+          <Text style={styles.splitTitle}>Splits</Text>
+          <FlatList data={splitData} renderItem={renderSplit} />
+          {eventName && !active && splits.length ? (
+            <Button title="Save" onPress={saveSplits} />
+          ) : null}
+        </View>
+      ) : null}
     </SafeAreaView>
   );
 }

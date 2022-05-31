@@ -1,5 +1,6 @@
 import { useContext, useState } from "react";
 import {
+  Button as SimpleButton,
   FlatList,
   Modal,
   SafeAreaView,
@@ -48,6 +49,7 @@ export default function Home({ navigation }) {
     modalText: {
       color: getThemeColor("text", darkMode),
       fontSize: 20,
+      marginTop: 8,
       textAlign: "center",
     },
     modalButtonRow: {
@@ -145,12 +147,12 @@ export default function Home({ navigation }) {
               Delete "{events[deleteEvent]}" Event?
             </Text>
             <View style={styles.modalButtonRow}>
-              <Button
+              <SimpleButton
                 style={styles.modalButton}
                 title="Delete"
                 onPress={removeEvent}
               />
-              <Button
+              <SimpleButton
                 style={styles.modalButton}
                 title="Cancel"
                 onPress={() => {

@@ -53,7 +53,7 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   buttonDisabled: {
-    backgroundColor: "rgba(128, 128, 128, 0.5)",
+    backgroundColor: "rgba(128, 128, 128, 0.25)",
   },
   buttonText: {
     color: "white",

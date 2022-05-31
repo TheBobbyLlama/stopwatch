@@ -15,8 +15,10 @@ export function getThemeColor(key, darkMode) {
     case "buttonSplit":
       return darkMode ? "#4080c0" : "#4080e0";
     case "buttonStart":
+    case "splitGood":
       return darkMode ? "#40a040" : "#40c040";
     case "buttonStop":
+    case "splitBad":
       return darkMode ? "#a03030" : "#e04040";
     case "element":
       return darkMode ? "#202020" : "white";
