@@ -62,7 +62,7 @@ export default function Split({
       paddingRight: 8,
     },
     splitData: {
-      alignItems: "center",
+      alignItems: "flex-end",
       display: "flex",
       flexBasis: 0,
       flexDirection: "row",
@@ -80,6 +80,7 @@ export default function Split({
     splitMS: {
       color: getThemeColor("text", darkMode),
       fontSize: 16,
+      paddingBottom: 1,
     },
     splitGood: {
       color: getThemeColor("splitGood", darkMode),

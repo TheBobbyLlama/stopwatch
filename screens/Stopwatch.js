@@ -88,10 +88,11 @@ export default function Stopwatch() {
       paddingVertical: 16,
     },
     showTime: {
-      alignItems: "center",
+      alignItems: "flex-end",
       display: "flex",
       flexDirection: "row",
       justifyContent: "center",
+      marginTop: 16,
     },
     time: {
       color: getThemeColor("text", darkMode),
@@ -101,6 +102,7 @@ export default function Stopwatch() {
       color: getThemeColor("text", darkMode),
       fontSize: 40,
       minWidth: 60,
+      paddingBottom: 3,
     },
     buttonStart: {
       alignItems: "stretch",
@@ -123,6 +125,9 @@ export default function Stopwatch() {
       marginBottom: 10,
     },
     splitPreview: {
+      alignItems: "flex-end",
+      display: "flex",
+      flexDirection: "row",
       height: 28,
     },
   });
