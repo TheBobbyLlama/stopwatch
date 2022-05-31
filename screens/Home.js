@@ -14,7 +14,9 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import Store from "../components/StoreContext";
 import { getThemeColor } from "../util/theme";
 
-export default function Home() {
+import appInfo from "../app.json";
+
+export default function Home({ navigation }) {
   const { darkMode, events, setEvents } = useContext(Store);
   const [newEvent, setNewEvent] = useState("");
   const [deleteEvent, setDeleteEvent] = useState(-1);
@@ -79,7 +81,6 @@ export default function Home() {
     },
     listContent: {
       color: getThemeColor("text", darkMode),
-      flexGrow: 1,
       fontSize: 20,
     },
     listInput: {
@@ -110,7 +111,15 @@ export default function Home() {
   const renderEventListing = ({ item, index }) => {
     return (
       <View style={styles.listRow}>
-        <Text style={styles.listContent}>{item}</Text>
+        <Button
+          style={styles.listContent}
+          type="clear"
+          onPress={() => {
+            navigation.navigate(appInfo.expo.name + ": " + events[index]);
+          }}
+        >
+          {item}
+        </Button>
         <Button
           type="clear"
           onPress={() => {

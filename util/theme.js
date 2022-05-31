@@ -10,6 +10,14 @@ export function getThemeColor(key, darkMode) {
             android: PlatformColor("?android:attr/buttonTint"),
             default: "black",
           });
+    case "buttonReset":
+      return darkMode ? "#a09030" : "#e0d040";
+    case "buttonSplit":
+      return darkMode ? "#4080c0" : "#4080e0";
+    case "buttonStart":
+      return darkMode ? "#40a040" : "#40c040";
+    case "buttonStop":
+      return darkMode ? "#a03030" : "#e04040";
     case "element":
       return darkMode ? "#202020" : "white";
     case "header":
