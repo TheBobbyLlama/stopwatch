@@ -27,6 +27,9 @@ export default function Stopwatch() {
   const [active, setActive] = useState(false);
   const [splits, setSplits] = useState([]);
 
+  const textStyle = { color: getThemeColor("text", darkMode) };
+  const elementStyle = { backgroundColor: getThemeColor("element", darkMode) };
+
   useEffect(() => {
     let tick;
 
@@ -74,64 +77,6 @@ export default function Stopwatch() {
     setSplits([]);
   };
 
-  const styles = StyleSheet.create({
-    workspace: {
-      backgroundColor: getThemeColor("workspace", darkMode),
-      height: "100%",
-    },
-    stopwatch: {
-      alignItems: "stretch",
-      backgroundColor: getThemeColor("element", darkMode),
-      borderRadius: 8,
-      margin: 10,
-      paddingHorizontal: 32,
-      paddingVertical: 16,
-    },
-    showTime: {
-      alignItems: "flex-end",
-      display: "flex",
-      flexDirection: "row",
-      justifyContent: "center",
-      marginTop: 16,
-    },
-    time: {
-      color: getThemeColor("text", darkMode),
-      fontSize: 48,
-    },
-    timeMS: {
-      color: getThemeColor("text", darkMode),
-      fontSize: 40,
-      minWidth: 60,
-      paddingBottom: 3,
-    },
-    buttonStart: {
-      alignItems: "stretch",
-      display: "flex",
-      marginVertical: 16,
-      height: 100,
-    },
-    splitView: {
-      backgroundColor: getThemeColor("element", darkMode),
-      borderRadius: 8,
-      margin: 10,
-      paddingHorizontal: 32,
-      paddingVertical: 16,
-    },
-    splitTitle: {
-      alignSelf: "center",
-      color: getThemeColor("text", darkMode),
-      fontSize: 24,
-      fontWeight: "bold",
-      marginBottom: 10,
-    },
-    splitPreview: {
-      alignItems: "flex-end",
-      display: "flex",
-      flexDirection: "row",
-      height: 28,
-    },
-  });
-
   const renderSplit = ({ item, index }) => {
     return <Split index={index} {...item} />;
   };
@@ -162,11 +107,16 @@ export default function Stopwatch() {
   }
 
   return (
-    <SafeAreaView style={styles.workspace}>
-      <View style={styles.stopwatch}>
+    <SafeAreaView
+      style={[
+        styles.workspace,
+        { backgroundColor: getThemeColor("workspace", darkMode) },
+      ]}
+    >
+      <View style={[styles.stopwatch, elementStyle]}>
         <View style={styles.showTime}>
-          <Text style={styles.time}>{displayTime}</Text>
-          <Text style={styles.timeMS}>.{displayMS}</Text>
+          <Text style={[styles.time, textStyle]}>{displayTime}</Text>
+          <Text style={[styles.timeMS, textStyle]}>.{displayMS}</Text>
         </View>
         <View style={styles.splitPreview}>
           {splits.length
@@ -196,8 +146,8 @@ export default function Stopwatch() {
         />
       </View>
       {splitData.length ? (
-        <View style={styles.splitView}>
-          <Text style={styles.splitTitle}>Splits</Text>
+        <View style={[styles.splitView, elementStyle]}>
+          <Text style={[styles.splitTitle, textStyle]}>Splits</Text>
           <FlatList data={splitData} renderItem={renderSplit} />
           {eventName && !active && splits.length ? (
             <Button title="Save" onPress={saveSplits} />
@@ -207,3 +157,55 @@ export default function Stopwatch() {
     </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  workspace: {
+    height: "100%",
+  },
+  stopwatch: {
+    alignItems: "stretch",
+    borderRadius: 8,
+    margin: 10,
+    paddingHorizontal: 32,
+    paddingVertical: 16,
+  },
+  showTime: {
+    alignItems: "flex-end",
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "center",
+    marginTop: 16,
+  },
+  time: {
+    fontSize: 48,
+  },
+  timeMS: {
+    fontSize: 40,
+    minWidth: 60,
+    paddingBottom: 3,
+  },
+  buttonStart: {
+    alignItems: "stretch",
+    display: "flex",
+    marginVertical: 16,
+    height: 100,
+  },
+  splitView: {
+    borderRadius: 8,
+    margin: 10,
+    paddingHorizontal: 32,
+    paddingVertical: 16,
+  },
+  splitTitle: {
+    alignSelf: "center",
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 10,
+  },
+  splitPreview: {
+    alignItems: "flex-end",
+    display: "flex",
+    flexDirection: "row",
+    height: 28,
+  },
+});

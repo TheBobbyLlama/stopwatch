@@ -22,78 +22,9 @@ export default function Home({ navigation }) {
   const [newEvent, setNewEvent] = useState("");
   const [deleteEvent, setDeleteEvent] = useState(-1);
 
-  const styles = StyleSheet.create({
-    centeredView: {
-      alignItems: "center",
-      backgroundColor: "rgba(0, 0, 0, 0.5)",
-      display: "flex",
-      height: "100%",
-      justifyContent: "center",
-    },
-    modalView: {
-      alignItems: "center",
-      backgroundColor: getThemeColor("element", darkMode),
-      borderRadius: 8,
-      elevation: 5,
-      gap: 10,
-      paddingHorizontal: 32,
-      paddingVertical: 16,
-      shadowColor: "#000",
-      shadowOffset: {
-        width: 0,
-        height: 2,
-      },
-      shadowOpacity: 0.25,
-      shadowRadius: 4,
-    },
-    modalText: {
-      color: getThemeColor("text", darkMode),
-      fontSize: 20,
-      marginTop: 8,
-      textAlign: "center",
-    },
-    modalButtonRow: {
-      alignItems: "center",
-      display: "flex",
-      flexDirection: "row",
-      justifyContent: "center",
-      marginTop: 10,
-    },
-    modalButton: {
-      margin: 4,
-    },
-    workspace: {
-      backgroundColor: getThemeColor("workspace", darkMode),
-      height: "100%",
-    },
-    eventList: {
-      flexGrow: 0,
-      marginTop: 2,
-    },
-    listRow: {
-      alignItems: "center",
-      backgroundColor: getThemeColor("element", darkMode),
-      display: "flex",
-      flexDirection: "row",
-      justifyContent: "space-between",
-      marginBottom: 2,
-      marginTop: 2,
-      padding: 8,
-      paddingLeft: 20,
-    },
-    listContent: {
-      color: getThemeColor("text", darkMode),
-      fontSize: 20,
-    },
-    listInput: {
-      color: getThemeColor("text", darkMode),
-      flexGrow: 1,
-      fontSize: 20,
-      height: "100%",
-    },
-  });
-
   const buttonColor = getThemeColor("button", darkMode);
+  const textStyle = { color: getThemeColor("text", darkMode) };
+  const elementStyle = { backgroundColor: getThemeColor("element", darkMode) };
 
   const addNewEvent = () => {
     if (newEvent) {
@@ -112,9 +43,9 @@ export default function Home({ navigation }) {
 
   const renderEventListing = ({ item, index }) => {
     return (
-      <View style={styles.listRow}>
+      <View style={[styles.listRow, elementStyle]}>
         <Button
-          style={styles.listContent}
+          style={[styles.listContent, textStyle]}
           type="clear"
           onPress={() => {
             navigation.navigate(appInfo.expo.name + ": " + events[index]);
@@ -139,11 +70,16 @@ export default function Home({ navigation }) {
   };
 
   return (
-    <SafeAreaView style={styles.workspace}>
+    <SafeAreaView
+      style={[
+        styles.workspace,
+        { backgroundColor: getThemeColor("workspace", darkMode) },
+      ]}
+    >
       <Modal animationType="fade" transparent={true} visible={deleteEvent > -1}>
         <View style={styles.centeredView}>
-          <View style={styles.modalView}>
-            <Text style={styles.modalText}>
+          <View style={[styles.modalView, elementStyle]}>
+            <Text style={[styles.modalText, textStyle]}>
               Delete "{events[deleteEvent]}" Event?
             </Text>
             <View style={styles.modalButtonRow}>
@@ -170,7 +106,7 @@ export default function Home({ navigation }) {
       />
       <View style={styles.listRow}>
         <TextInput
-          style={styles.listInput}
+          style={[styles.listInput, textStyle]}
           placeholder="Save a new Event..."
           placeholderTextColor="rgba(128, 128, 128, 0.5)"
           returnKeyType="done"
@@ -189,3 +125,68 @@ export default function Home({ navigation }) {
     </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  centeredView: {
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    display: "flex",
+    height: "100%",
+    justifyContent: "center",
+  },
+  modalView: {
+    alignItems: "center",
+    borderRadius: 8,
+    elevation: 5,
+    gap: 10,
+    paddingHorizontal: 32,
+    paddingVertical: 16,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+  },
+  modalText: {
+    fontSize: 20,
+    marginTop: 8,
+    textAlign: "center",
+  },
+  modalButtonRow: {
+    alignItems: "center",
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "center",
+    marginTop: 10,
+  },
+  modalButton: {
+    margin: 4,
+  },
+  workspace: {
+    height: "100%",
+  },
+  eventList: {
+    flexGrow: 0,
+    marginTop: 2,
+  },
+  listRow: {
+    alignItems: "center",
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 2,
+    marginTop: 2,
+    padding: 8,
+    paddingLeft: 20,
+  },
+  listContent: {
+    fontSize: 20,
+  },
+  listInput: {
+    flexGrow: 1,
+    fontSize: 20,
+    height: "100%",
+  },
+});

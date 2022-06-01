@@ -19,7 +19,7 @@ function getDefaultValue(key) {
 export default function useStoreValue(storeKey) {
   const defaultValue = getDefaultValue(storeKey);
   const [item, setItemState] = useState(defaultValue);
-  const { getItem, setItem, removeItem } = useAsyncStorage(storeKey);
+  const { getItem, setItem } = useAsyncStorage(storeKey);
 
   const loadItemFromStore = () => {
     getItem()
@@ -41,5 +41,5 @@ export default function useStoreValue(storeKey) {
     loadItemFromStore();
   }, []);
 
-  return [item, changeItem, removeItem];
+  return [item, changeItem];
 }
