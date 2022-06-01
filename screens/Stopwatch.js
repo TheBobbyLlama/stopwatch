@@ -128,19 +128,25 @@ export default function Stopwatch() {
         </View>
         <CustomButton
           title={active ? "Split" : "Start"}
-          style={styles.buttonStart}
-          backgroundColor={getThemeColor(
-            active ? "buttonSplit" : "buttonStart",
-            darkMode
-          )}
+          style={[
+            styles.buttonStart,
+            {
+              backgroundColor: getThemeColor(
+                active ? "buttonSplit" : "buttonStart",
+                darkMode
+              ),
+            },
+          ]}
           onPress={doStartSplit}
         />
         <CustomButton
           title={active ? "Stop" : "Reset"}
-          backgroundColor={getThemeColor(
-            active ? "buttonStop" : "buttonReset",
-            darkMode
-          )}
+          style={{
+            backgroundColor: getThemeColor(
+              active ? "buttonStop" : "buttonReset",
+              darkMode
+            ),
+          }}
           onPress={doStopReset}
           disabled={!elapsedTime}
         />
@@ -193,6 +199,7 @@ const styles = StyleSheet.create({
   splitView: {
     borderRadius: 8,
     margin: 10,
+    marginTop: 0,
     paddingHorizontal: 32,
     paddingVertical: 16,
   },

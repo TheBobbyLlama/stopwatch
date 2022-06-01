@@ -70,18 +70,6 @@ export default function Split({
         <Text style={styles.splitIndexText}>{index + 1}</Text>
       </View>
       <View style={styles.splitData}>
-        <Text style={textStyle}>{lapTime[0]}</Text>
-        <Text style={msStyle}>.{lapTime[1]}</Text>
-      </View>
-      <View style={styles.splitData}>
-        {lapDiff !== null ? (
-          <>
-            <Text style={[styles.splitText, lapDiffStyle]}>{lapDiff[0]}</Text>
-            <Text style={[styles.splitMS, lapDiffStyle]}>.{lapDiff[1]}</Text>
-          </>
-        ) : null}
-      </View>
-      <View style={styles.splitData}>
         <Text style={textStyle}>{totalTime[0]}</Text>
         <Text style={msStyle}>.{totalTime[1]}</Text>
       </View>
@@ -94,6 +82,18 @@ export default function Split({
             <Text style={[styles.splitMS, totalDiffStyle]}>
               .{totalDiff[1]}
             </Text>
+          </>
+        ) : null}
+      </View>
+      <View style={styles.splitData}>
+        <Text style={textStyle}>+{lapTime[0]}</Text>
+        <Text style={msStyle}>.{lapTime[1]}</Text>
+      </View>
+      <View style={styles.splitData}>
+        {lapDiff !== null ? (
+          <>
+            <Text style={[styles.splitText, lapDiffStyle]}>{lapDiff[0]}</Text>
+            <Text style={[styles.splitMS, lapDiffStyle]}>.{lapDiff[1]}</Text>
           </>
         ) : null}
       </View>

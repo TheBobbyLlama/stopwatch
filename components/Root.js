@@ -28,7 +28,7 @@ export default function Root() {
     },
   };
 
-  const buttonColor = getThemeColor("button", darkMode);
+  const buttonColor = getThemeColor("headerButton", darkMode);
 
   return (
     <>

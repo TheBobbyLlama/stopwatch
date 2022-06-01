@@ -7,17 +7,71 @@ import {
   View,
 } from "react-native";
 
+const extractStyleItems = (style, items) => {
+  const result = {};
+
+  if (style) {
+    for (let i = 0; i < items.length; i++) {
+      if (style.length) {
+        for (let s = style.length; s >= 0; s--) {
+          if (style[s]?.[items[i]] !== undefined) {
+            result[items[i]] = style[s][items[i]];
+            break;
+          }
+        }
+      } else if (style[items[i]] !== undefined) {
+        result[items[i]] = style[items[i]];
+      }
+    }
+  }
+
+  return result;
+};
+
+const getStyleItem = (style, item) => {
+  if (style) {
+    if (style.length) {
+      for (let i = style.length - 1; i >= 0; i--) {
+        if (style[i]?.[item]) {
+          return style[i][item];
+        }
+      }
+    } else {
+      return style[item];
+    }
+  }
+};
+
 export default function CustomButton({
   title,
-  backgroundColor,
+  style,
   onPress,
   disabled,
   ...rest
 }) {
-  const buttonStyles = [styles.buttonBody];
+  let buttonStyle = {
+    ...styles.buttonBody,
+    ...extractStyleItems(style, ["backgroundColor"]),
+  };
 
-  if (backgroundColor) buttonStyles.push({ backgroundColor });
-  if (disabled) buttonStyles.push(styles.buttonDisabled);
+  if (disabled) {
+    buttonStyle = { ...buttonStyle, ...styles.buttonDisabled };
+  }
+
+  if (extractStyleItems(style, ["textAlign"])?.textAlign === "left") {
+    buttonStyle = {
+      ...buttonStyle,
+      alignItems: "center",
+      display: "flex",
+      flexDirection: "row",
+      justifyContent: "flex-start",
+    };
+  }
+
+  let textStyle = {
+    ...styles.buttonText,
+    ...extractStyleItems(style, ["color", "fontSize", "fontWeight"]),
+  };
 
   const doPress = () => {
     if (!onPress) {
@@ -29,10 +83,19 @@ export default function CustomButton({
 
   const ButtonBody = disabled ? View : TouchableOpacity;
 
+  const mergeStyle = style.length
+    ? style.reduce((previous, current) => {
+        return { ...previous, ...current };
+      }, {})
+    : style;
+
   return (
-    <View style={{ height: 40 }} {...rest}>
-      <ButtonBody style={buttonStyles} onPress={doPress}>
-        <Text style={styles.buttonText}>{title}</Text>
+    <View
+      style={{ height: 40, ...mergeStyle, backgroundColor: "transparent" }}
+      {...rest}
+    >
+      <ButtonBody style={[buttonStyle]} onPress={doPress}>
+        <Text style={textStyle}>{title}</Text>
       </ButtonBody>
     </View>
   );

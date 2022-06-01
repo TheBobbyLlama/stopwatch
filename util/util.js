@@ -47,7 +47,7 @@ export const formatTime = (elapsedTime) => {
     timeDisplay = "-" + timeDisplay;
   }
 
-  const msDisplay = padStart(Math.round(elapsedMS / 10).toString(), 2, "0");
+  const msDisplay = padStart(Math.floor(elapsedMS / 10).toString(), 2, "0");
 
   return [timeDisplay, msDisplay];
 };

@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import { Button } from "@rneui/base";
 import { Icon } from "@rneui/themed";
+import CustomButton from "../components/CustomButton";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Store from "../components/StoreContext";
 import { getThemeColor } from "../util/theme";
@@ -44,15 +45,16 @@ export default function Home({ navigation }) {
   const renderEventListing = ({ item, index }) => {
     return (
       <View style={[styles.listRow, elementStyle]}>
-        <Button
-          style={[styles.listContent, textStyle]}
-          type="clear"
+        <CustomButton
+          title={item}
+          style={[
+            styles.listContent,
+            { color: getThemeColor("button", darkMode) },
+          ]}
           onPress={() => {
             navigation.navigate(appInfo.expo.name + ": " + events[index]);
           }}
-        >
-          {item}
-        </Button>
+        />
         <Button
           type="clear"
           onPress={() => {
@@ -104,11 +106,11 @@ export default function Home({ navigation }) {
         data={events}
         renderItem={renderEventListing}
       />
-      <View style={styles.listRow}>
+      <View style={[styles.listRow, elementStyle]}>
         <TextInput
           style={[styles.listInput, textStyle]}
           placeholder="Save a new Event..."
-          placeholderTextColor="rgba(128, 128, 128, 0.5)"
+          placeholderTextColor="rgba(128, 128, 128, 0.75)"
           returnKeyType="done"
           maxLength={30}
           value={newEvent}
@@ -182,7 +184,10 @@ const styles = StyleSheet.create({
     paddingLeft: 20,
   },
   listContent: {
+    backgroundColor: "transparent",
+    flexGrow: 1,
     fontSize: 20,
+    textAlign: "left",
   },
   listInput: {
     flexGrow: 1,
