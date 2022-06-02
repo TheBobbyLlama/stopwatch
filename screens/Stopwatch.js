@@ -75,6 +75,7 @@ export default function Stopwatch() {
   const saveSplits = () => {
     setSavedSplits(splits);
     setSplits([]);
+    setElapsedTime(0);
   };
 
   const renderSplit = ({ item, index }) => {
